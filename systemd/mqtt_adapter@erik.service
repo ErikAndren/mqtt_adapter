@@ -1,0 +1,13 @@
+[Unit]
+Description=Reroute mqtt messages
+After=network.target
+Requires=network.target
+ 
+[Service]
+Type=simple
+ExecStart=/usr/bin/python /home/erik/Development/mqtt_adapter/mqtt_adapter.py
+Restart=always
+User=erik
+ 
+[Install]
+WantedBy=multi-user.target
