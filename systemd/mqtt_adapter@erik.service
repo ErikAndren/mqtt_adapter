@@ -5,7 +5,7 @@ Requires=network.target
  
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /home/erik/Development/mqtt_adapter/mqtt_adapter.py
+ExecStart=/usr/bin/python /home/erik/Development/mqtt_adapter/mqtt_adapter.py
 Restart=always
 User=erik
  
