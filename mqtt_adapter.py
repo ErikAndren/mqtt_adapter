@@ -14,11 +14,18 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
+    
     msg_json = json.loads(str(msg.payload))
+    #FIXME: Parse json messages too
 
     # Verify message to at least some extent
-    if msg_json['RfRaw']['Data'][0:4] == "AAA4" and msg_json['RfRaw']['Data'][22:24] == "55":
-        publish.single("tele/sonoff/door_sensor", msg_json['RfRaw']['Data'][16:22], hostname = "phobos")
+    if 'RfRaw' in msg_json:
+        if msg_json['RfRaw']['Data'][0:4] == "AAA4" and msg_json['RfRaw']['Data'][22:24] == "55":
+            publish.single("tele/sonoff/rf_message", msg_json['RfRaw']['Data'][16:22], hostname = "phobos")
+
+    if 'RfReceived' in msg_json:
+        publish.single('tele/sonoff/rf_message', msg_json['RfReceived']['Data'], hostname = "phobos") 
+
 
 client = mqtt.Client()
 client.on_connect = on_connect
