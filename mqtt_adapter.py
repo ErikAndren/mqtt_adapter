@@ -14,9 +14,12 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    
-    msg_json = json.loads(str(msg.payload))
-    #FIXME: Parse json messages too
+    m_decode = str(msg.payload.decode('utf-8', 'ignore'))
+
+    try:
+        msg_json = json.loads(m_decode)
+    except Exception as e:
+        print ('Exception: ', e)
 
     # Verify message to at least some extent
     if 'RfRaw' in msg_json:
