@@ -3,6 +3,15 @@
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 import json
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-s', '--server', default = 'phobos', help = 'What MQTT server to connect to')
+parser.add_argument('-p', '--port', default = 1883, help = 'What MQTT port to connect to')
+parser.add_argument('-v', '--verbose', help = 'verbose output', action = 'store_true')
+parser.add_argument('-t', '--topic', default = 'tele/sonoff/RESULT/#', help = 'What MQTT topic to listen to') 
+
+args = parser.parse_args()
 
 topic = "tele/sonoff/RESULT/#"
 
@@ -24,17 +33,17 @@ def on_message(client, userdata, msg):
     # Verify message to at least some extent
     if 'RfRaw' in msg_json:
         if msg_json['RfRaw']['Data'][0:4] == "AAA4" and msg_json['RfRaw']['Data'][22:24] == "55":
-            publish.single("tele/sonoff/rf_message", msg_json['RfRaw']['Data'][16:22], hostname = "phobos")
+            publish.single("tele/sonoff/rf_message", msg_json['RfRaw']['Data'][16:22], hostname = args.server)
 
     if 'RfReceived' in msg_json:
-        publish.single('tele/sonoff/rf_message', msg_json['RfReceived']['Data'], hostname = "phobos") 
+        publish.single('tele/sonoff/rf_message', msg_json['RfReceived']['Data'], hostname = args.server) 
 
 
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("phobos", 1883, 60)
+client.connect(args.server, args.port, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
